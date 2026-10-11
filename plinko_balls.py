@@ -58,7 +58,7 @@ def create_pins():
         else:
             col_count = pin_rows + 2
         for col in range(col_count):
-            x = width // 2 + row_offset + col * pin_spacing - 330
+            x = width // 2 + row_offset + col * pin_spacing - 175
             y = row * pin_spacing + pin_start
             pins.append((x, y))
 create_pins()
