@@ -404,7 +404,7 @@ def render_text_box():
     #pygame.draw.rect(screen, text_box_color, input_box, 2)
     screen.blit(txt_surface, (input_box.x + 8 * ratio, input_box.y + (input_box.height - txt_surface_height)//2))
     txt_surface = header0.render('投注量: ', True, white)
-    screen.blit(txt_surface, (input_box.x, input_box.y + 5 - 36 * ratio))
+    screen.blit(txt_surface, (input_box.x, input_box.y + 5 - 50 * ratio))
     
 
 def handle_text_input(event):
