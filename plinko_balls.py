@@ -28,8 +28,11 @@ error_sound = pygame.mixer.Sound('sounds/error.wav')
 error_sound.set_volume(0.2)
 
 # Set up display
-#width, height = 1280, 720
-width, height = 1920, 1080
+if sys.platform == "win32":
+    width, height = 960, 540
+else:
+    width, height = 1920, 1080
+
 ratio = width / 1280
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("國立成功大學統計與資料科學學系：彈珠台電腦模擬遊戲")
@@ -104,11 +107,11 @@ def create_rgb_gradient(start_color, end_color, steps):
 
 
 # Fonts for the headers
-font = 'Noto Sans CJK TC'
-header0 = pygame.font.SysFont(font, int(24 * ratio), True)
-header1 = pygame.font.SysFont(font, int(22 * ratio), True)
-header2 = pygame.font.SysFont(font, int(14 * ratio), True)
-header_money = pygame.font.SysFont(font, int(36 * ratio), True)
+font = 'fonts/NotoSansTC-Regular.ttf'
+header0 = pygame.font.Font(font, int(24 * ratio))
+header1 = pygame.font.Font(font, int(22 * ratio))
+header2 = pygame.font.Font(font, int(14 * ratio))
+header_money = pygame.font.Font(font, int(36 * ratio))
 
 # Bin settings
 rgb_gradient = create_rgb_gradient(red, yellow, 8)
