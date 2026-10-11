@@ -16,6 +16,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import pygame
+import ctypes
+
+try:
+    ctypes.windll.user32.SetProcessDPIAware()
+except Exception:
+    pass
 
 # Initialize Pygame
 pygame.init()
@@ -28,10 +34,7 @@ error_sound = pygame.mixer.Sound('sounds/error.wav')
 error_sound.set_volume(0.2)
 
 # Set up display
-if sys.platform == "win32":
-    width, height = 960, 540
-else:
-    width, height = 1920, 1080
+width, height = 1920, 1080
 
 ratio = width / 1280
 screen = pygame.display.set_mode((width, height))
@@ -58,7 +61,7 @@ def create_pins():
         else:
             col_count = pin_rows + 2
         for col in range(col_count):
-            x = width // 2 + row_offset + col * pin_spacing - 175
+            x = width // 2 + row_offset + col * pin_spacing - 330
             y = row * pin_spacing + pin_start
             pins.append((x, y))
 create_pins()
