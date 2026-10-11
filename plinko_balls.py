@@ -6,6 +6,7 @@ Inputs -
     change number of pin rows - click on "Rows" slider to change (no grab and drag)
     change number of balls at once - click on "Ball(s) at Once" slider to change (no grab and drag)
     change x-center bias - click on "Center Bias" slider to change (no grab and drag)
+    The bigger the center bias is, The smaller the standard deviation
     change bet - click text input, enter digit only value, hit ENTER (Defaults max bet if value to large) (board must be empty to enter)
 Author - Jared Dilley
 GitHub - https://github.com/jareddilley
@@ -31,7 +32,7 @@ error_sound.set_volume(0.2)
 width, height = 1920, 1080
 ratio = width / 1280
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Plinko Game")
+pygame.display.set_caption("國立成功大學統計與資料科學學系：彈珠台電腦模擬遊戲")
 
 # Frame counter
 frame_counter = 0
@@ -40,7 +41,7 @@ frame_counter = 0
 pins = []
 pin_radius = int(5 * ratio)
 pin_spacing = int(40 * ratio)
-pin_rows = 16
+pin_rows = 10
 pin_start = 0
 
 def create_pins():
@@ -49,8 +50,12 @@ def create_pins():
     offset = pin_spacing // 2
     for row in range(1, pin_rows + 1):
         row_offset = offset if row % 2 == 0 else 0
-        for col in range(-(row// 2) - 1, (row - 1) // 2 + 2):
-            x = width // 2 + col * pin_spacing + row_offset
+        if row % 2 == 0:
+            col_count = pin_rows + 1
+        else:
+            col_count = pin_rows + 2
+        for col in range(col_count):
+            x = width // 2 + row_offset + col * pin_spacing - 330
             y = row * pin_spacing + pin_start
             pins.append((x, y))
 create_pins()
@@ -59,7 +64,9 @@ create_pins()
 def convert_color(rgb_color):
     return tuple([x / 255 for x in rgb_color])
 
-background = (19, 33, 45)
+
+# background = (19, 33, 45)
+background = (0, 119, 182)
 red = (250, 1, 62)
 yellow = (252, 192, 2)
 dark_red = (146, 0, 7)
@@ -95,39 +102,42 @@ def create_rgb_gradient(start_color, end_color, steps):
     ]
     return gradient
 
+
 # Fonts for the headers
-font = 'Gill Sans'
+font = 'Noto Sans CJK TC'
 header0 = pygame.font.SysFont(font, int(24 * ratio), True)
 header1 = pygame.font.SysFont(font, int(22 * ratio), True)
 header2 = pygame.font.SysFont(font, int(14 * ratio), True)
 header_money = pygame.font.SysFont(font, int(36 * ratio), True)
 
 # Bin settings
-rgb_gradient = create_rgb_gradient(red, yellow, (pin_rows+2) // 2)
+rgb_gradient = create_rgb_gradient(red, yellow, 8)
 rgb_gradient_rev = rgb_gradient[::-1]
 rgb_gradient.extend(rgb_gradient_rev[1:])
-dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, (pin_rows+2) // 2)
+dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 8)
 dark_rgb_gradient_rev = dark_rgb_gradient[::-1]
 dark_rgb_gradient.extend(dark_rgb_gradient_rev[1:])
 bin_texts = ['1000', '130', '26x', '9x', '4x', '2x', '0.2x', '0.2x', '0.2x','0.2x','0.2x','2x','4x','9x','26x', '130', '1000']
 low_bin_texts = ['1', '1', '1', '9x', '5x', '2x', '1x', '0.5x', '0.2x', '0.5x', '1x', '2x', '5x', '9x', '1', '1', '1']
 bin_width = pin_spacing * 0.8
-recent_bins = [bin_texts[7],bin_texts[8],bin_texts[9],bin_texts[10]]
-recent_bin_colors = [rgb_gradient[7],rgb_gradient[8],rgb_gradient[9],rgb_gradient[10]]
+recent_bins = bin_texts[7:11]
+recent_bin_colors = rgb_gradient[7:11]
 
 def create_bin_text_surfaces():
     global pin_rows
     """Pre-render all bin texts."""
     bin_text_surfaces = []
-    texts = bin_texts
-    if pin_rows < 10: texts = low_bin_texts
+    texts = bin_texts[(16 - pin_rows) // 2:(16 + pin_rows) // 2 + 1]
+    if pin_rows < 10:
+        texts = low_bin_texts[(16 - pin_rows) // 2:(16 + pin_rows) // 2 + 1]
     for text in texts:
         rendered_text = header2.render(text, True, black)
         bin_text_surfaces.append(rendered_text)
+    
     return bin_text_surfaces
 
 # Pre-render bin texts
-hit_bins=[7,8,9,10]
+hit_bins=[i for i in range(7, 11)]
 
 def render_bins():
     global hit_bins
@@ -139,8 +149,8 @@ def render_bins():
         animate = True if bin in hit_bins else False # if hit
 
         offset_x = bin * pin_spacing + (not pin_rows % 2) * pin_spacing // 2
-        index = bin + 8 - pin_rows//2
-        if pin_rows % 2 and bin <= pin_rows//2: index -= 1
+        index = bin
+        # if pin_rows % 2 and bin <= pin_rows//2: index -= 1
 
         bin_text_surface = bin_text_surfaces[index]
 
@@ -160,18 +170,18 @@ def render_bins():
             text_rect = bin_text_surface.get_rect(center=(base_x + bin_width // 2, base_y + bin_width // 2))
 
             # Draw dark rectangle
-            draw_rounded_rect(screen, dark_rect_right, dark_rgb_gradient[index], int(4 * ratio) + (ratio > 1))            
+            draw_rounded_rect(screen, dark_rect_right, dark_rgb_gradient[index + 7 - pin_rows // 2], int(4 * ratio) + (ratio > 1))            
         
         # Draw light rectangle and text
-        draw_rounded_rect(screen, light_rect_right, rgb_gradient[index], int(4 * ratio) + (ratio > 1))
+        draw_rounded_rect(screen, light_rect_right, rgb_gradient[index + 7 - pin_rows // 2], int(4 * ratio) + (ratio > 1))
         screen.blit(bin_text_surface, text_rect)
 
 def display_last_bins(recent_bins, recent_bin_colors):
     num_bins = len(recent_bins)
     display_size = int(70 * ratio)
     curve = int(12 * ratio)
-    display_start_x = width * 0.91
-    display_start_y = 0.9 * height - 0.75 * display_size - (4 - num_bins) * display_size
+    display_start_x = width * 0.91 - 150
+    display_start_y = 0.9 * height - 0.75 * display_size - (4 - num_bins) * display_size - 450
     # [top_left, top_right, bottom_left, bottom_right]
     four_corners = [[False, False, False, False]] * num_bins
     if num_bins == 1: four_corners[0] = [True, True, True, True]
@@ -201,7 +211,7 @@ plot_update = False
 plt.switch_backend('Agg') 
 plt.rcParams['xtick.color'] = plt_background 
 plt.rcParams['axes.linewidth'] = 2
-plt.rcParams['figure.facecolor'] = plt_background 
+plt.rcParams['figure.facecolor'] = plt_background
 plt.rcParams['axes.facecolor'] = plt_background
 plt.rcParams['axes.spines.top'] = False
 plt.rcParams['axes.spines.left'] = False
@@ -266,13 +276,14 @@ def custom_hist(data, bins, color_scheme=None, **kwargs):
 
 def update_prob_plot(del_balls_x):
     """Updates the histogram plot of ball locations."""
-    fig.set_size_inches(2.2 * ratio, 1.3 * ratio)
+    fig.set_size_inches(7.0 * ratio, 1.3 * ratio)
     plt.rcParams['axes.edgecolor'] = 'gray'
     bins = np.arange(0, pin_rows + 2, 1)
-    if not pin_rows % 2: plt_gradient_new = plt_gradient[8 - pin_rows//2:]
+    if not pin_rows % 2: plt_gradient_new = plt_gradient[7 - pin_rows // 2:8 + pin_rows // 2]
     else:
         plt_gradient_new = plt_gradient[:8] + plt_gradient[9:]
-        plt_gradient_new = plt_gradient_new[8 - pin_rows//2 - 1:]
+        plt_gradient_new = plt_gradient_new[8 - pin_rows//2 - 1:8 + pin_rows // 2 + 1]
+
     custom_hist(del_balls_x, bins, color_scheme=plt_gradient_new)
     # Save to a BytesIO object instead of disk
     buf = io.BytesIO()
@@ -281,13 +292,13 @@ def update_prob_plot(del_balls_x):
     image = pygame.image.load(buf)
     buf.close()
     return image
-hist_image = update_prob_plot(np.random.normal(8, 2.8, 10000))
+hist_image = update_prob_plot(np.random.normal(pin_rows // 2 + 0.5, 2.8, 10000))
 
 # Slider settings
 bias = 6
 sliders = {
     'rows': {'pos': (50 * ratio, 50 * ratio), 'min': 5, 'max': 16, 'value': pin_rows},
-    'balls_at_once': {'pos': (50 * ratio, 115 * ratio), 'min': 1, 'max': 50, 'value': balls_at_once},
+    'balls_at_once': {'pos': (50 * ratio, 115 * ratio), 'min': 1, 'max': 100, 'value': balls_at_once},
     'center_bias': {'pos': (50 * ratio, 180 * ratio), 'min': 1, 'max': 20, 'value': bias},
 }
 for key, slider in sliders.items():
@@ -341,12 +352,12 @@ def render_button(button_clicked):
     """Handle button states and actions."""
     mouse = pygame.mouse.get_pos()
     # Only change color on hover; clicking is handled via event loop
-    button_text = header1.render("Bet", True, black)
+    button_text = header1.render("投球", True, black)
     if button_clicked:
         draw_rounded_rect(screen, button_under_rect, button_color_states[1], 10)
-        text_rect = button_text.get_rect(center=(160 * ratio, (button_y + button_rect.height // 2 + 7)))
+        text_rect = button_text.get_rect(center=(155 * ratio, (button_y + button_rect.height // 2 + 7)))
     else:
-        text_rect = button_text.get_rect(center=(160 * ratio, (button_y + button_rect.height // 2)))
+        text_rect = button_text.get_rect(center=(155 * ratio, (button_y + button_rect.height // 2)))
         draw_rounded_rect(screen, button_under_rect, button_color_states[2], int(10 * ratio))
         if button_rect.collidepoint(mouse):
             draw_rounded_rect(screen, button_rect, button_color_states[1], int(10 * ratio))
@@ -356,9 +367,9 @@ def render_button(button_clicked):
     return button_rect.collidepoint(mouse)
 
 # Render and keep track of money
-START_MONEY = 5000.0
+START_MONEY = 100.0
 money = START_MONEY
-bet = 50.0
+bet = 1.0
 pl = 0
 pl_idx = 0
 pl_x_data = [pl_idx]
@@ -366,11 +377,19 @@ pl_y_data = [pl]
 input_box = pygame.Rect(50 * ratio, button_y - 1.2*button_rect.height, 210 * ratio, 40 * ratio)
 inner_gap = 2 * ratio
 inner_input_box = pygame.Rect(50 * ratio + inner_gap, button_y - 1.2*button_rect.height + inner_gap, 210 * ratio - 2 * inner_gap, 40 * ratio - 2 * inner_gap)
-text = f'${float(bet):.2f}' 
+text = f'分數: {float(bet):.2f}' 
 text_active = False  # State of the input box
 started_typing = False
 print_error = False
 err_surface = header2.render("INVALID", True, red)
+
+hist_image_width = 1475
+line_image_width = 500
+line_image_height = 800
+sign_text_height = 150
+sign_text_width = 150
+money_text_height = 150
+txt_surface_height = 50
 
 def render_text_box():
     global input_box, text, text_active
@@ -380,8 +399,8 @@ def render_text_box():
     draw_rounded_rect(screen, input_box, text_box_color, 10 * ratio)
     draw_rounded_rect(screen, inner_input_box, background, (10 - inner_gap) * ratio)
     #pygame.draw.rect(screen, text_box_color, input_box, 2)
-    screen.blit(txt_surface, (input_box.x + 8 * ratio, input_box.y + (input_box.height - txt_surface.height)//2))
-    txt_surface = header0.render('Bet Amount', True, white)
+    screen.blit(txt_surface, (input_box.x + 8 * ratio, input_box.y + (input_box.height - txt_surface_height)//2))
+    txt_surface = header0.render('投注量: ', True, white)
     screen.blit(txt_surface, (input_box.x, input_box.y + 5 - 36 * ratio))
     
 
@@ -399,12 +418,12 @@ def handle_text_input(event):
         if event.key == pygame.K_RETURN:
             text_active = False
             try: 
-                bet = float(text.replace('$', ''))
+                bet = float(text.replace('分數: ', ''))
                 if bet > money: bet = money
-                text = f'${bet:.2f}'
+                text = f'分數: {bet:.2f}'
                 print_error = False
             except ValueError:
-                text = f'${bet:.2f}'
+                text = f'分數: {bet:.2f}'
                 print_error = True
         elif event.key == pygame.K_BACKSPACE:
             text = text[:-1]  # Remove the last character
@@ -419,36 +438,36 @@ def render_money(money):
     if pl == 0: color = white
     elif pl > 0: color = green
     else: color = red
-    sign_text = header_money.render(f"$", True, color)
-    header_rect = sign_text.get_rect(topleft=(60 * ratio, (button_y + 7) + sign_text.height + button_rect.height//2))
+    sign_text = header_money.render(f"分數: ", True, color)
+    header_rect = sign_text.get_rect(topleft=(60 * ratio, (button_y + 7) + sign_text_height + button_rect.height//2))
     screen.blit(sign_text, header_rect) 
     money_text = header_money.render(f"{money:.2f}", True, white)
-    header_rect = money_text.get_rect(topleft=(60 * ratio + sign_text.width, (button_y + 7) + money_text.height + button_rect.height//2))
+    header_rect = money_text.get_rect(topleft=(60 * ratio + sign_text_width, (button_y + 7) + money_text_height + button_rect.height//2))
     screen.blit(money_text, header_rect)
 
-    '''bet_text = header2.render(f" Bet: ${bet:.2f}", True, white)
+    '''bet_text = header2.render(f" Bet: Score:{bet:.2f}", True, white)
     header_rect = bet_text.get_rect(topleft=(60 * ratio, (button_y + 7) + 2.25 * money_text.height + button_rect.height//2))
     screen.blit(bet_text, header_rect) ''' 
 
-def update_P_L_plot(pl_x_data, pl_y_data):
-    """Updates the P/L money."""
-    fig.clear()
-    fig.set_size_inches(2.8 * ratio, 1.5 * ratio)
-    pl_y_data = np.array(pl_y_data)
-    plt.rcParams['axes.edgecolor'] = plt_background
-    plt.plot(pl_x_data, pl_y_data, color='white', linewidth=2, alpha=0)  # Alpha set to 0 to make the line invisible
-    # Fill area y < 0 = Red, y > 0 Green
-    plt.fill_between(pl_x_data, pl_y_data, 0, where=(pl_y_data >= 0), color=plt_green, alpha=0.3, interpolate=True, linewidth=2, edgecolor=plt_green)
-    plt.fill_between(pl_x_data, pl_y_data, 0, where=(pl_y_data <= 0), color=plt_red, alpha=0.3, interpolate=True, linewidth=2, edgecolor=plt_red)
-    plt.axhline(0, color='gray', linewidth=2)
-    # Save to a BytesIO object instead of disk
-    buf = io.BytesIO()
-    canvas.print_png(buf)
-    buf.seek(0)
-    image = pygame.image.load(buf)
-    buf.close()
-    return image
-line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
+# def update_P_L_plot(pl_x_data, pl_y_data):
+#     """Updates the P/L money."""
+#     fig.clear()
+#     fig.set_size_inches(2.8 * ratio, 1.5 * ratio)
+#     pl_y_data = np.array(pl_y_data)
+#     plt.rcParams['axes.edgecolor'] = plt_background
+#     plt.plot(pl_x_data, pl_y_data, color='white', linewidth=2, alpha=0)  # Alpha set to 0 to make the line invisible
+#     # Fill area y < 0 = Red, y > 0 Green
+#     plt.fill_between(pl_x_data, pl_y_data, 0, where=(pl_y_data >= 0), color=plt_green, alpha=0.3, interpolate=True, linewidth=2, edgecolor=plt_green)
+#     plt.fill_between(pl_x_data, pl_y_data, 0, where=(pl_y_data <= 0), color=plt_red, alpha=0.3, interpolate=True, linewidth=2, edgecolor=plt_red)
+#     plt.axhline(0, color='gray', linewidth=2)
+#     # Save to a BytesIO object instead of disk
+#     buf = io.BytesIO()
+#     canvas.print_png(buf)
+#     buf.seek(0)
+#     image = pygame.image.load(buf)
+#     buf.close()
+#     return image
+# line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
 
 # Complete board reset
 def reset_board():
@@ -456,7 +475,7 @@ def reset_board():
     pin_rows = 16
     money = START_MONEY
     bet = 50.0
-    text = f'${bet:.2f}'
+    text = f'分數: {bet:.2f}'
     pl = 0
     pl_idx = 0
     pl_x_data = [pl_idx]
@@ -467,8 +486,8 @@ def reset_board():
     balls.clear()
     hit_bins.clear()
     del_balls_x.clear()
-    hist_image = update_prob_plot(np.random.normal(8, 2.8, 10000))
-    line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
+    hist_image = update_prob_plot(np.random.normal(pin_rows // 2, 2.8, 10000))
+    # line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
     bias = 6
     reset_sliders()
 
@@ -575,7 +594,7 @@ while running:
             plot_update = True
             score_sound.play()
             if bin < len(bin_texts) and bin >= 0:
-                index = bin + 8 - pin_rows//2
+                index = bin
                 if pin_rows % 2 and bin <= pin_rows//2: index -= 1
                 texts = bin_texts
                 if pin_rows < 10: texts = low_bin_texts
@@ -583,7 +602,7 @@ while running:
                 recent_bins = recent_bins[-4:]
                 recent_bin_colors.append(rgb_gradient[index])
                 recent_bin_colors = recent_bin_colors[-4:]
-                return_money = bet * float(texts[index].replace('x',''))
+                return_money = bet * float(texts[index + 8 - pin_rows // 2].replace('x',''))
                 money += return_money
                 pl_idx += 1
                 pl = pl_y_data[-1] + return_money - bet
@@ -599,8 +618,10 @@ while running:
 
     # Draw sliders and their labels
     for key, slider in sliders.items():
-        header_text = header0.render(f"{key.replace('_', ' ').title()}", True, white)
-        header_rect = header_text.get_rect(topleft=(slider['pos'][0], slider['pos'][1] - 32 * ratio))
+        header_ch = {"rows" : "行數", "balls_at_once" : "球數", "center_bias" : "集中程度"}
+        header_text = header0.render(f"{header_ch[key]}", True, white)
+        # header_text = header0.render(f"{key.replace('_', ' ').title()}", True, white)
+        header_rect = header_text.get_rect(topleft=(slider['pos'][0], slider['pos'][1] - 40 * ratio))
         screen.blit(header_text, header_rect)
         draw_rounded_rect(screen, slider['rect'], gray, 2 * ratio)
         slider['handle'].x = slider['pos'][0] + int((slider['value'] - sliders[key]['min']) / (sliders[key]['max'] - sliders[key]['min']) * 200 * ratio)
@@ -610,12 +631,12 @@ while running:
     render_button(button_clicked)
 
     # Display Plot
-    if hist_image and line_image:
-        screen.blit(hist_image, (width - hist_image.width - 20 * ratio, 40 + line_image.height))
-        screen.blit(line_image, (width - line_image.width - 20 * ratio, 20))
+    if hist_image:
+        screen.blit(hist_image, (width - hist_image_width - 20 * ratio, 40 + line_image_height))
+        # screen.blit(line_image, (width - line_image_width - 20 * ratio, 20))
         if frame_counter >= 30 and plot_update:
             hist_image = update_prob_plot(del_balls_x) # slow function
-            line_image = update_P_L_plot(pl_x_data, pl_y_data) # slow function
+            # line_image = update_P_L_plot(pl_x_data, pl_y_data) # slow function
             frame_counter = 0
             plot_update = False
 
