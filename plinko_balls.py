@@ -619,7 +619,8 @@ while running:
     # Draw sliders and their labels
     for key, slider in sliders.items():
         header_ch = {"rows" : "行數", "balls_at_once" : "球數", "center_bias" : "集中程度"}
-        header_text = header0.render(f"{header_ch[key]}", True, white)
+        header_val = {"rows" : pin_rows, "balls_at_once" : balls_at_once, "center_bias" : bias}
+        header_text = header0.render(f"{header_ch[key]}:   {header_val[key]}", True, white)
         # header_text = header0.render(f"{key.replace('_', ' ').title()}", True, white)
         header_rect = header_text.get_rect(topleft=(slider['pos'][0], slider['pos'][1] - 40 * ratio))
         screen.blit(header_text, header_rect)
