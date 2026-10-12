@@ -34,8 +34,8 @@ error_sound.set_volume(0.2)
 # Set up display
 display_info = pygame.display.Info()
 SCREEN_WIDTH = display_info.current_w
-SCREEN_HEIGH = display_info.current_h
-width, height = int(SCREEN_WIDTH * 0.75), int(SCREEN_HEIGH * 0.75)
+SCREEN_HEIGHT = int(SCREEN_WIDTH * (9 / 16))
+width, height = int(SCREEN_WIDTH * 0.75), int(SCREEN_HEIGHT * 0.75)
 
 ratio = width / 1280
 screen = pygame.display.set_mode((width, height))
@@ -62,7 +62,7 @@ def create_pins():
         else:
             col_count = pin_rows + 2
         for col in range(col_count):
-            x = width // 2 + row_offset + col * pin_spacing - 330
+            x = int(width * 0.328) + row_offset + col * pin_spacing
             y = row * pin_spacing + pin_start
             pins.append((x, y))
 create_pins()
@@ -188,7 +188,8 @@ def display_last_bins(recent_bins, recent_bin_colors):
     display_size = int(70 * ratio)
     curve = int(12 * ratio)
     display_start_x = width * 0.91 - 150
-    display_start_y = 0.9 * height - 0.75 * display_size - (4 - num_bins) * display_size - 450
+    # display_start_y = 0.9 * height - 0.75 * display_size - (4 - num_bins) * display_size - 450
+    display_start_y = height * 0.41
     # [top_left, top_right, bottom_left, bottom_right]
     four_corners = [[False, False, False, False]] * num_bins
     if num_bins == 1: four_corners[0] = [True, True, True, True]
@@ -390,9 +391,7 @@ started_typing = False
 print_error = False
 err_surface = header2.render("INVALID", True, red)
 
-hist_image_width = 1475
-line_image_width = 500
-line_image_height = 800
+
 sign_text_height = 150
 sign_text_width = 150
 money_text_height = 150
@@ -406,7 +405,7 @@ def render_text_box():
     draw_rounded_rect(screen, input_box, text_box_color, 10 * ratio)
     draw_rounded_rect(screen, inner_input_box, background, (10 - inner_gap) * ratio)
     #pygame.draw.rect(screen, text_box_color, input_box, 2)
-    screen.blit(txt_surface, (input_box.x + 8 * ratio, input_box.y + (input_box.height - txt_surface_height)//2))
+    screen.blit(txt_surface, (input_box.x + 8 * ratio, height * 0.35))
     txt_surface = header0.render('投注量: ', True, white)
     screen.blit(txt_surface, (input_box.x, input_box.y + 5 - 50 * ratio))
     
@@ -446,10 +445,11 @@ def render_money(money):
     elif pl > 0: color = green
     else: color = red
     sign_text = header_money.render(f"分數: ", True, color)
-    header_rect = sign_text.get_rect(topleft=(60 * ratio, (button_y + 7) + sign_text_height + button_rect.height//2))
+    # header_rect = sign_text.get_rect(topleft=(60 * ratio, (button_y + 7) + sign_text_height + button_rect.height//2))
+    header_rect = sign_text.get_rect(topleft=(60 * ratio, button_y + button_rect.height + 80 * ratio))
     screen.blit(sign_text, header_rect) 
     money_text = header_money.render(f"{money:.2f}", True, white)
-    header_rect = money_text.get_rect(topleft=(60 * ratio + sign_text_width, (button_y + 7) + money_text_height + button_rect.height//2))
+    header_rect = money_text.get_rect(topleft=(160 * ratio, button_y + button_rect.height + 80 * ratio))
     screen.blit(money_text, header_rect)
 
     '''bet_text = header2.render(f" Bet: Score:{bet:.2f}", True, white)
@@ -640,7 +640,7 @@ while running:
 
     # Display Plot
     if hist_image:
-        screen.blit(hist_image, (width - hist_image_width - 20 * ratio, 40 + line_image_height))
+        screen.blit(hist_image, (width * 0.22, height * 0.78))
         # screen.blit(line_image, (width - line_image_width - 20 * ratio, 20))
         if frame_counter >= 30 and plot_update:
             hist_image = update_prob_plot(del_balls_x) # slow function
