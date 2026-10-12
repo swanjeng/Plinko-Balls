@@ -35,7 +35,7 @@ error_sound.set_volume(0.2)
 display_info = pygame.display.Info()
 SCREEN_WIDTH = display_info.current_w
 SCREEN_HEIGHT = int(SCREEN_WIDTH * (9 / 16))
-width, height = int(SCREEN_WIDTH * 0.75), int(SCREEN_HEIGHT * 0.75)
+width, height = int(SCREEN_WIDTH * 0.98), int(SCREEN_HEIGHT * 0.98)
 
 ratio = width / 1280
 screen = pygame.display.set_mode((width, height))
@@ -472,10 +472,10 @@ def render_money(money):
 
 # Complete board reset
 def reset_board():
-    global pin_rows, balls_at_once, ball_radius, balls, hit_bins, del_balls_x, hist_image, money, pl, pl_idx, pl_x_data, pl_y_data, bet, line_image, text, bias
-    pin_rows = 16
+    global pin_rows, balls_at_once, ball_radius, balls, hit_bins, del_balls_x, hist_image, money, pl, pl_idx, pl_x_data, pl_y_data, bet, text, bias
+    pin_rows = 10
     money = START_MONEY
-    bet = 50.0
+    bet = 1.0
     text = f'分數: {bet:.2f}'
     pl = 0
     pl_idx = 0
@@ -487,7 +487,7 @@ def reset_board():
     balls.clear()
     hit_bins.clear()
     del_balls_x.clear()
-    hist_image = update_prob_plot(np.random.normal(pin_rows // 2, 2.8, 10000))
+    hist_image = update_prob_plot(np.random.normal(pin_rows // 2 + 0.5, 2.8, 10000))
     # line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
     bias = 6
     reset_sliders()
@@ -516,7 +516,8 @@ while running:
                 click_sound.play()
         elif event.type == pygame.MOUSEBUTTONUP:
             button_clicked = False
-        elif event.type == pygame.KEYDOWN:
+        
+        if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 sys.exit()
@@ -634,7 +635,7 @@ while running:
 
     # Display Plot
     if hist_image:
-        screen.blit(hist_image, (width * 0.22, height * 0.78))
+        screen.blit(hist_image, (width * 0.23, height * 0.78))
         # screen.blit(line_image, (width - line_image_width - 20 * ratio, 20))
         if frame_counter >= 30 and plot_update:
             hist_image = update_prob_plot(del_balls_x) # slow function
