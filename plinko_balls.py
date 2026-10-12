@@ -32,7 +32,10 @@ error_sound = pygame.mixer.Sound('sounds/error.wav')
 error_sound.set_volume(0.2)
 
 # Set up display
-width, height = 1920, 1080
+display_info = pygame.display.Info()
+SCREEN_WIDTH = display_info.current_w
+SCREEN_HEIGH = display_info.current_h
+width, height = int(SCREEN_WIDTH * 0.75), int(SCREEN_HEIGH * 0.75)
 
 ratio = width / 1280
 screen = pygame.display.set_mode((width, height))
