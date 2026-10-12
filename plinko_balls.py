@@ -391,12 +391,6 @@ started_typing = False
 print_error = False
 err_surface = header2.render("INVALID", True, red)
 
-
-sign_text_height = 150
-sign_text_width = 150
-money_text_height = 150
-txt_surface_height = 50
-
 def render_text_box():
     global input_box, text, text_active
     text_box_color = white if text_active else gray
