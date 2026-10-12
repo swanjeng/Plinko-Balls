@@ -18,10 +18,8 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import pygame
 import ctypes
 
-try:
-    ctypes.windll.user32.SetProcessDPIAware()
-except Exception:
-    pass
+if sys.platform == "win32":
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
 # Initialize Pygame
 pygame.init()
