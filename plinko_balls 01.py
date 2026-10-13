@@ -125,6 +125,7 @@ header_money = pygame.font.Font(font, int(36 * ratio))
 rgb_gradient = create_rgb_gradient(red, yellow, 8)
 rgb_gradient_rev = rgb_gradient[::-1]
 rgb_gradient.extend(rgb_gradient_rev[1:])
+print(len(rgb_gradient))
 dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 8)
 dark_rgb_gradient_rev = dark_rgb_gradient[::-1]
 dark_rgb_gradient.extend(dark_rgb_gradient_rev[1:])
@@ -175,6 +176,10 @@ def render_bins():
 
         base_x = bin_start_offset - bin_width // 2 + offset_x
 
+        color_index = index + (14 - pin_rows) // 2
+        if pin_rows % 2 and index <= pin_rows // 2:
+            color_index += 1
+
         if animate:
             # Configure Rects for drawing  
             light_rect_right = pygame.Rect(base_x, base_y + click_offset, bin_width, bin_width)
@@ -189,10 +194,11 @@ def render_bins():
             text_rect = bin_text_surface.get_rect(center=(base_x + bin_width // 2, base_y + bin_width // 2))
 
             # Draw dark rectangle
-            draw_rounded_rect(screen, dark_rect_right, dark_rgb_gradient[index + 7 - pin_rows // 2], int(4 * ratio) + (ratio > 1))            
+            
+            draw_rounded_rect(screen, dark_rect_right, dark_rgb_gradient[color_index], int(4 * ratio) + (ratio > 1))            
         
         # Draw light rectangle and text
-        draw_rounded_rect(screen, light_rect_right, rgb_gradient[index + 7 - pin_rows // 2], int(4 * ratio) + (ratio > 1))
+        draw_rounded_rect(screen, light_rect_right, rgb_gradient[color_index], int(4 * ratio) + (ratio > 1))
         screen.blit(bin_text_surface, text_rect)
 
 def display_last_bins(recent_bins, recent_bin_colors):
@@ -299,10 +305,10 @@ def update_prob_plot(del_balls_x):
     fig.set_size_inches(7.0 * ratio, 1.3 * ratio)
     plt.rcParams['axes.edgecolor'] = 'gray'
     bins = np.arange(0, pin_rows + 2, 1)
-    if not pin_rows % 2: plt_gradient_new = plt_gradient[7 - pin_rows // 2:8 + pin_rows // 2]
+    if pin_rows % 2 == 0:
+        plt_gradient_new = plt_gradient[7 - pin_rows // 2:8 + pin_rows // 2]
     else:
-        plt_gradient_new = plt_gradient[:8] + plt_gradient[9:]
-        plt_gradient_new = plt_gradient_new[8 - pin_rows//2 - 1:8 + pin_rows // 2 + 1]
+        plt_gradient_new = plt_gradient[(14 - pin_rows) // 2 : 7] + plt_gradient[8 : (14 + pin_rows) // 2 + 2]
 
     custom_hist(del_balls_x, bins, color_scheme=plt_gradient_new)
     # Save to a BytesIO object instead of disk
