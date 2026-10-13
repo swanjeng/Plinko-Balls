@@ -512,7 +512,6 @@ def reset_board():
     recent_bin_colors = [rgb_gradient[i] for i in [6, 7, 9, 10]]
 
 
-# Todo: reset button
 reset_button_y = height * 0.75
 reset_under_rect = pygame.Rect(50 * ratio, (reset_button_y + 7), 210 * ratio, 50 * ratio)
 reset_button_rect = pygame.Rect(50 * ratio, reset_button_y, 210 * ratio, 50 * ratio)
