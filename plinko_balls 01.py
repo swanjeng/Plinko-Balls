@@ -488,7 +488,7 @@ def render_money(money):
 
 # Complete board reset
 def reset_board():
-    global pin_rows, balls_at_once, ball_radius, balls, hit_bins, del_balls_x, hist_image, money, pl, pl_idx, pl_x_data, pl_y_data, bet, text, bias
+    global pin_rows, balls_at_once, ball_radius, balls, hit_bins, del_balls_x, hist_image, money, pl, pl_idx, pl_x_data, pl_y_data, bet, text, bias, recent_bins
     pin_rows = 10
     money = START_MONEY
     bet = 1.0
@@ -508,6 +508,9 @@ def reset_board():
     # line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
     bias = 6
     reset_sliders()
+    recent_bins = [bin_texts[i] for i in [6, 7, 9, 10]]
+    recent_bin_colors = [rgb_gradient[i] for i in [6, 7, 9, 10]]
+
 
 # Todo: reset button
 reset_button_y = height * 0.75
