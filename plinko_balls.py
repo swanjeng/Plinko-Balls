@@ -314,7 +314,8 @@ def update_prob_plot(del_balls_x):
     image = pygame.image.load(buf)
     buf.close()
     return image
-hist_image = update_prob_plot(np.random.normal(pin_rows // 2 + 0.5, 2.8, 10000))
+# hist_image = update_prob_plot(np.random.normal(pin_rows // 2 + 0.5, 2.8, 10000))
+hist_image = update_prob_plot([])
 
 # Slider settings
 bias = 6
@@ -501,7 +502,8 @@ def reset_board():
     balls.clear()
     hit_bins.clear()
     del_balls_x.clear()
-    hist_image = update_prob_plot(np.random.normal(pin_rows // 2 + 0.5, 2.8, 10000))
+    # hist_image = update_prob_plot(np.random.normal(pin_rows // 2 + 0.5, 2.8, 10000))
+    hist_image = update_prob_plot([])
     # line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
     bias = 6
     reset_sliders()
