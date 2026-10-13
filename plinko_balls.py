@@ -127,19 +127,30 @@ rgb_gradient.extend(rgb_gradient_rev[1:])
 dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 8)
 dark_rgb_gradient_rev = dark_rgb_gradient[::-1]
 dark_rgb_gradient.extend(dark_rgb_gradient_rev[1:])
+print(len(rgb_gradient)) # 15
 bin_texts = ['1000', '130', '26x', '9x', '4x', '2x', '0.2x', '0.2x', '0.2x','0.2x','0.2x','2x','4x','9x','26x', '130', '1000']
+print(len(bin_texts)) # 17
 low_bin_texts = ['1', '1', '1', '9x', '5x', '2x', '1x', '0.5x', '0.2x', '0.5x', '1x', '2x', '5x', '9x', '1', '1', '1']
+print(len(low_bin_texts)) # 17
 bin_width = pin_spacing * 0.8
-recent_bins = bin_texts[7:11]
-recent_bin_colors = rgb_gradient[7:11]
+recent_bins = [bin_texts[i] for i in [6, 7, 9, 10]]
+recent_bin_colors = [rgb_gradient[i] for i in [6, 7, 9, 10]]
 
 def create_bin_text_surfaces():
     global pin_rows
     """Pre-render all bin texts."""
     bin_text_surfaces = []
-    texts = bin_texts[(16 - pin_rows) // 2:(16 + pin_rows) // 2 + 1]
-    if pin_rows < 10:
-        texts = low_bin_texts[(16 - pin_rows) // 2:(16 + pin_rows) // 2 + 1]
+    if pin_rows >= 10:
+        if pin_rows % 2 == 0:
+            texts = bin_texts[(16 - pin_rows) // 2 : (16 + pin_rows) // 2 + 1]
+        else:
+            texts = bin_texts[(16 - pin_rows) // 2 : 8] + bin_texts[9 : (16 + pin_rows) // 2 + 2]
+    else:
+        if pin_rows % 2 == 0:
+            texts = low_bin_texts[(16 - pin_rows) // 2 : (16 + pin_rows) // 2 + 1]
+        else:
+            texts = low_bin_texts[(16 - pin_rows) // 2 : 8] + low_bin_texts[9 : (16 + pin_rows) // 2 + 2]
+    
     for text in texts:
         rendered_text = header2.render(text, True, black)
         bin_text_surfaces.append(rendered_text)
@@ -147,7 +158,7 @@ def create_bin_text_surfaces():
     return bin_text_surfaces
 
 # Pre-render bin texts
-hit_bins=[i for i in range(7, 11)]
+hit_bins=[6, 7, 9, 10]
 
 def render_bins():
     global hit_bins
@@ -308,7 +319,7 @@ hist_image = update_prob_plot(np.random.normal(pin_rows // 2 + 0.5, 2.8, 10000))
 # Slider settings
 bias = 6
 sliders = {
-    'rows': {'pos': (50 * ratio, 50 * ratio), 'min': 5, 'max': 16, 'value': pin_rows},
+    'rows': {'pos': (50 * ratio, 50 * ratio), 'min': 5, 'max': 12, 'value': pin_rows},
     'balls_at_once': {'pos': (50 * ratio, 115 * ratio), 'min': 1, 'max': 100, 'value': balls_at_once},
     'center_bias': {'pos': (50 * ratio, 180 * ratio), 'min': 1, 'max': 20, 'value': bias},
 }
@@ -634,9 +645,9 @@ while running:
                 if pin_rows % 2 and bin <= pin_rows//2: index -= 1
                 texts = bin_texts
                 if pin_rows < 10: texts = low_bin_texts
-                recent_bins.append(texts[index])
+                recent_bins.append(texts[index + 8 - pin_rows // 2])
                 recent_bins = recent_bins[-4:]
-                recent_bin_colors.append(rgb_gradient[index])
+                recent_bin_colors.append(rgb_gradient[index + 8 - pin_rows // 2])
                 recent_bin_colors = recent_bin_colors[-4:]
                 return_money = bet * float(texts[index + 8 - pin_rows // 2].replace('x',''))
                 money += return_money
