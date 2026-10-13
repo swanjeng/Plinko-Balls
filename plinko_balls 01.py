@@ -56,11 +56,12 @@ def create_pins():
     pins.clear()
     offset = pin_spacing // 2
     for row in range(1, pin_rows + 1):
-        row_offset = offset if row % 2 == 1 else 0
-        if row % 2 == 0:
-            col_count = pin_rows + 1
-        else:
+        row_offset = offset if (pin_rows - row) % 2 == 1 else 0
+        if (pin_rows - row) % 2 == 0:
             col_count = pin_rows + 2
+        else:
+            col_count = pin_rows + 1
+
         for col in range(col_count):
             if pin_rows % 2 == 0:
                 x = width // 2 - (pin_spacing * (pin_rows // 2 + 0.5)) + row_offset + col * pin_spacing
