@@ -127,11 +127,8 @@ rgb_gradient.extend(rgb_gradient_rev[1:])
 dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 8)
 dark_rgb_gradient_rev = dark_rgb_gradient[::-1]
 dark_rgb_gradient.extend(dark_rgb_gradient_rev[1:])
-print(len(rgb_gradient)) # 15
 bin_texts = ['1000', '130', '26x', '9x', '4x', '2x', '0.2x', '0.2x', '0.2x','0.2x','0.2x','2x','4x','9x','26x', '130', '1000']
-print(len(bin_texts)) # 17
 low_bin_texts = ['1', '1', '1', '9x', '5x', '2x', '1x', '0.5x', '0.2x', '0.5x', '1x', '2x', '5x', '9x', '1', '1', '1']
-print(len(low_bin_texts)) # 17
 bin_width = pin_spacing * 0.8
 recent_bins = [bin_texts[i] for i in [6, 7, 9, 10]]
 recent_bin_colors = [rgb_gradient[i] for i in [6, 7, 9, 10]]
