@@ -492,6 +492,30 @@ def reset_board():
     bias = 6
     reset_sliders()
 
+# Todo: reset button
+reset_button_y = height * 0.75
+reset_under_rect = pygame.Rect(50 * ratio, (reset_button_y + 7), 210 * ratio, 50 * ratio)
+reset_button_rect = pygame.Rect(50 * ratio, reset_button_y, 210 * ratio, 50 * ratio)
+reset_button_clicked = False
+def render_reset_button(button_clicked):
+    """Handle reset button states and actions."""
+    mouse = pygame.mouse.get_pos()
+    # Only change color on hover; clicking is handled via event loop
+    reset_button_text = header1.render("重置", True, black)
+    if button_clicked:
+        draw_rounded_rect(screen, reset_under_rect, button_color_states[1], 10)
+        text_rect = reset_button_text.get_rect(center=(155 * ratio, (reset_button_y + reset_button_rect.height // 2 + 7)))
+    else:
+        text_rect = reset_button_text.get_rect(center=(155 * ratio, (reset_button_y + reset_button_rect.height // 2)))
+        draw_rounded_rect(screen, reset_under_rect, button_color_states[2], int(10 * ratio))
+        if reset_button_rect.collidepoint(mouse):
+            draw_rounded_rect(screen, reset_button_rect, button_color_states[1], int(10 * ratio))
+        else:
+            draw_rounded_rect(screen, reset_button_rect, button_color_states[0], int(10 * ratio))
+    screen.blit(reset_button_text, text_rect)
+    return reset_button_rect.collidepoint(mouse)
+
+
 # Game loop
 running = True
 while running:
@@ -514,8 +538,15 @@ while running:
                     balls.append([start_x, random.randint(-2*ball_radius,-ball_radius), 0, 0])  # [x_position, y_position, x_speed, y_speed]
                     money -= bet
                 click_sound.play()
+
+            if render_reset_button(reset_button_clicked) and not reset_button_clicked:
+                reset_button_clicked = True
+                reset_board()
+                click_sound.play()
+
         elif event.type == pygame.MOUSEBUTTONUP:
             button_clicked = False
+            reset_button_clicked = False
         
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -630,8 +661,9 @@ while running:
         slider['handle'].x = slider['pos'][0] + int((slider['value'] - sliders[key]['min']) / (sliders[key]['max'] - sliders[key]['min']) * 200 * ratio)
         draw_rounded_rect(screen, slider['handle'], white, 2 * ratio)
 
-    # Render the button
+    # Render the buttons
     render_button(button_clicked)
+    render_reset_button(reset_button_clicked)
 
     # Display Plot
     if hist_image:
