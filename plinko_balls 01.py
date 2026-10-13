@@ -485,7 +485,7 @@ def render_money(money):
 
 # Complete board reset
 def reset_board():
-    global pin_rows, balls_at_once, ball_radius, balls, hit_bins, del_balls_x, hist_image, money, pl, pl_idx, pl_x_data, pl_y_data, bet, text, bias, recent_bins
+    global pin_rows, balls_at_once, ball_radius, balls, hit_bins, del_balls_x, hist_image, money, pl, pl_idx, pl_x_data, pl_y_data, bet, text, bias, recent_bins, recent_bin_colors
     pin_rows = 10
     money = START_MONEY
     bet = 1.0
