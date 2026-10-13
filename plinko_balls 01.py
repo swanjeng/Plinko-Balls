@@ -125,7 +125,6 @@ header_money = pygame.font.Font(font, int(36 * ratio))
 rgb_gradient = create_rgb_gradient(red, yellow, 8)
 rgb_gradient_rev = rgb_gradient[::-1]
 rgb_gradient.extend(rgb_gradient_rev[1:])
-print(len(rgb_gradient))
 dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 8)
 dark_rgb_gradient_rev = dark_rgb_gradient[::-1]
 dark_rgb_gradient.extend(dark_rgb_gradient_rev[1:])
