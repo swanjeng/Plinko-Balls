@@ -464,29 +464,6 @@ def render_money(money):
     header_rect = money_text.get_rect(topleft=(160 * ratio, button_y + button_rect.height + 80 * ratio))
     screen.blit(money_text, header_rect)
 
-    '''bet_text = header2.render(f" Bet: Score:{bet:.2f}", True, white)
-    header_rect = bet_text.get_rect(topleft=(60 * ratio, (button_y + 7) + 2.25 * money_text.height + button_rect.height//2))
-    screen.blit(bet_text, header_rect) ''' 
-
-# def update_P_L_plot(pl_x_data, pl_y_data):
-#     """Updates the P/L money."""
-#     fig.clear()
-#     fig.set_size_inches(2.8 * ratio, 1.5 * ratio)
-#     pl_y_data = np.array(pl_y_data)
-#     plt.rcParams['axes.edgecolor'] = plt_background
-#     plt.plot(pl_x_data, pl_y_data, color='white', linewidth=2, alpha=0)  # Alpha set to 0 to make the line invisible
-#     # Fill area y < 0 = Red, y > 0 Green
-#     plt.fill_between(pl_x_data, pl_y_data, 0, where=(pl_y_data >= 0), color=plt_green, alpha=0.3, interpolate=True, linewidth=2, edgecolor=plt_green)
-#     plt.fill_between(pl_x_data, pl_y_data, 0, where=(pl_y_data <= 0), color=plt_red, alpha=0.3, interpolate=True, linewidth=2, edgecolor=plt_red)
-#     plt.axhline(0, color='gray', linewidth=2)
-#     # Save to a BytesIO object instead of disk
-#     buf = io.BytesIO()
-#     canvas.print_png(buf)
-#     buf.seek(0)
-#     image = pygame.image.load(buf)
-#     buf.close()
-#     return image
-# line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
 
 # Complete board reset
 def reset_board():
