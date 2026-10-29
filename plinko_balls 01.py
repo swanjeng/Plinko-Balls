@@ -131,14 +131,16 @@ header2 = pygame.font.Font(font, int(14 * ratio))
 header_money = pygame.font.Font(font, int(36 * ratio))
 
 # Bin settings
-rgb_gradient = create_rgb_gradient(red, yellow, 8)
+rgb_gradient = create_rgb_gradient(red, yellow, 9) # 8
 rgb_gradient_rev = rgb_gradient[::-1]
 rgb_gradient.extend(rgb_gradient_rev[1:])
-dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 8)
+print(len(rgb_gradient))
+dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 9) # 8
 dark_rgb_gradient_rev = dark_rgb_gradient[::-1]
 dark_rgb_gradient.extend(dark_rgb_gradient_rev[1:])
 bin_texts = ['1000', '130', '26x', '9x', '4x', '2x', '0.2x', '0.2x',
              '0.2x', '0.2x', '0.2x', '2x', '4x', '9x', '26x', '130', '1000']
+print(len(bin_texts))
 low_bin_texts = ['1', '1', '1', '9x', '5x', '2x', '1x', '0.5x',
                  '0.2x', '0.5x', '1x', '2x', '5x', '9x', '1', '1', '1']
 bin_width = pin_spacing * 0.8
@@ -192,7 +194,7 @@ def render_bins():
 
         base_x = bin_start_offset - bin_width // 2 + offset_x
 
-        color_index = index + (14 - pin_rows) // 2
+        color_index = index + (16 - pin_rows) // 2
         if pin_rows % 2 and index <= pin_rows // 2:
             color_index += 1
 
@@ -358,10 +360,10 @@ def update_prob_plot(del_balls_x):
     plt.rcParams['axes.edgecolor'] = 'gray'
     bins = np.arange(0, pin_rows + 2, 1)
     if pin_rows % 2 == 0:
-        plt_gradient_new = plt_gradient[7 - pin_rows // 2:8 + pin_rows // 2]
+        plt_gradient_new = plt_gradient[8 - pin_rows // 2:9 + pin_rows // 2]
     else:
         plt_gradient_new = plt_gradient[(
-            14 - pin_rows) // 2: 7] + plt_gradient[8: (14 + pin_rows) // 2 + 2]
+            16 - pin_rows) // 2: 8] + plt_gradient[9: (16 + pin_rows) // 2 + 2]
 
     custom_hist(del_balls_x, bins, color_scheme=plt_gradient_new)
     # Save to a BytesIO object instead of disk
@@ -625,7 +627,7 @@ while running:
                         break
                     # Drop a ball between the top pins
                     start_x = random.randint(
-                        width // 2 - pin_spacing + pin_radius, width // 2 + pin_spacing - pin_radius)
+                        int(width // 2 - ratio * (21 - bias) * 5), int(width // 2 + ratio * (21 - bias) * 5))
                     # [x_position, y_position, x_speed, y_speed]
                     balls.append(
                         [start_x, random.randint(-2*ball_radius, -ball_radius), 0, 0])
