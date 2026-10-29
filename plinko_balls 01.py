@@ -134,13 +134,11 @@ header_money = pygame.font.Font(font, int(36 * ratio))
 rgb_gradient = create_rgb_gradient(red, yellow, 9) # 8
 rgb_gradient_rev = rgb_gradient[::-1]
 rgb_gradient.extend(rgb_gradient_rev[1:])
-print(len(rgb_gradient))
 dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 9) # 8
 dark_rgb_gradient_rev = dark_rgb_gradient[::-1]
 dark_rgb_gradient.extend(dark_rgb_gradient_rev[1:])
 bin_texts = ['1000', '130', '26x', '9x', '4x', '2x', '0.2x', '0.2x',
              '0.2x', '0.2x', '0.2x', '2x', '4x', '9x', '26x', '130', '1000']
-print(len(bin_texts))
 low_bin_texts = ['1', '1', '1', '9x', '5x', '2x', '1x', '0.5x',
                  '0.2x', '0.5x', '1x', '2x', '5x', '9x', '1', '1', '1']
 bin_width = pin_spacing * 0.8
