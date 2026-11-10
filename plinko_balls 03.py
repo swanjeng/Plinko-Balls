@@ -666,7 +666,7 @@ while running:
 
     # Update the position of each ball
     index1 = 0
-    print(fall_speed_increment)
+    # print(fall_speed_increment)
     for ball in balls:
         index1 += 1
         ball[0] += ball[2]  # Update x position by x speed
