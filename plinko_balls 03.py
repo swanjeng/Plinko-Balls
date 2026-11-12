@@ -53,6 +53,7 @@ pin_radius = int(5 * ratio)
 pin_spacing = int(40 * ratio)
 pin_rows = 10
 pin_start = 0
+bin_cols = 8
 
 
 def create_pins():
@@ -63,15 +64,15 @@ def create_pins():
         row_offset = offset if (pin_rows - row) % 2 == 1 else 0
         if pin_rows % 2: row_offset += offset
         if (pin_rows - row) % 2 == 0:
-            col_count = 18
+            col_count = 9
         else:
-            col_count = 17
+            col_count = 8
 
         for col in range(col_count):
             if pin_rows % 2 == 0:
-                x = width // 2 - (pin_spacing * 8.5) + row_offset + col * pin_spacing
+                x = width // 2 - (pin_spacing * 3.5) + row_offset + col * pin_spacing
             else:
-                x = width // 2 - (pin_spacing * 9) + row_offset + col * pin_spacing
+                x = width // 2 - (pin_spacing * 4) + row_offset + col * pin_spacing
             y = row * pin_spacing + pin_start
             pins.append((x, y))
 
@@ -131,19 +132,20 @@ header2 = pygame.font.Font(font, int(14 * ratio))
 header_money = pygame.font.Font(font, int(36 * ratio))
 
 # Bin settings
-rgb_gradient = create_rgb_gradient(red, yellow, 9) # 8
+rgb_gradient = create_rgb_gradient(red, yellow, 4)
 rgb_gradient_rev = rgb_gradient[::-1]
-rgb_gradient.extend(rgb_gradient_rev[1:])
-dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 9) # 8
+rgb_gradient.extend(rgb_gradient_rev[:])
+dark_rgb_gradient = create_rgb_gradient(dark_red, dark_yellow, 4)
 dark_rgb_gradient_rev = dark_rgb_gradient[::-1]
-dark_rgb_gradient.extend(dark_rgb_gradient_rev[1:])
-bin_texts = ['1000', '130', '26x', '9x', '4x', '2x', '0.2x', '0.2x',
-             '0.2x', '0.2x', '0.2x', '2x', '4x', '9x', '26x', '130', '1000']
-low_bin_texts = ['1', '1', '1', '9x', '5x', '2x', '1x', '0.5x',
-                 '0.2x', '0.5x', '1x', '2x', '5x', '9x', '1', '1', '1']
+dark_rgb_gradient.extend(dark_rgb_gradient_rev[:])
+# bin_texts = ['1000', '130', '26x', '9x', '4x', '2x', '0.2x', '0.2x',
+#              '0.2x', '0.2x', '0.2x', '2x', '4x', '9x', '26x', '130', '1000']
+# bin_texts = ['1', '1', '1', '9x', '5x', '2x', '1x', '0.5x',
+#                  '0.2x', '0.5x', '1x', '2x', '5x', '9x', '1', '1', '1']
+bin_texts = ['5x', '2x', '1x', '0.5x', '0.5x', '1x', '2x', '5x']
 bin_width = pin_spacing * 0.8
-recent_bins = [bin_texts[i] for i in [6, 7, 9, 10]]
-recent_bin_colors = [rgb_gradient[i] for i in [6, 7, 9, 10]]
+recent_bins = [bin_texts[i] for i in [2, 3, 4, 5]]
+recent_bin_colors = [rgb_gradient[i] for i in [2, 3, 4, 5]]
 
 
 def create_bin_text_surfaces():
@@ -161,16 +163,16 @@ def create_bin_text_surfaces():
 
 
 # Pre-render bin texts
-hit_bins = [6, 7, 9, 10]
+hit_bins = [2, 3, 4, 5]
 
 
 def render_bins():
     global hit_bins
     bin_text_surfaces = create_bin_text_surfaces()
     click_offset = 4 * ratio
-    bin_start_offset = width // 2 - (8.5) * pin_spacing
+    bin_start_offset = width // 2 - (3.5) * pin_spacing
     base_y = pin_rows * pin_spacing + pin_start + pin_spacing // 2
-    for bin in range(17):
+    for bin in range(bin_cols):
         animate = True if bin in hit_bins else False  # if hit
 
         offset_x = bin * pin_spacing + pin_spacing // 2
@@ -335,7 +337,7 @@ def custom_hist(data, bins, color_scheme=None, **kwargs):
         # Check if the color list is long enough
         if len(color_scheme) < len(patches):
             raise ValueError(
-                "Color scheme list has fewer elements than the number of bins")
+                f"Color scheme list {len(color_scheme)} has fewer elements than the number of bins {len(patches)}")
         for patch, color in zip(patches, color_scheme):
             patch.set_facecolor(color)
 
@@ -344,7 +346,7 @@ def update_prob_plot(del_balls_x):
     """Updates the histogram plot of ball locations."""
     fig.set_size_inches(7.0 * ratio, 1.3 * ratio)
     plt.rcParams['axes.edgecolor'] = 'gray'
-    bins = np.arange(0, 18, 1)
+    bins = np.arange(0, 9, 1)
     plt_gradient_new = plt_gradient[:]
     
     custom_hist(del_balls_x, bins, color_scheme=plt_gradient_new)
@@ -554,8 +556,8 @@ def reset_board():
     # line_image = update_P_L_plot(list(range(0,200)), 15 + np.cumsum(np.random.normal(loc=0.01, scale=5, size=200)))
     bias = 6
     reset_sliders()
-    recent_bins = [bin_texts[i] for i in [6, 7, 9, 10]]
-    recent_bin_colors = [rgb_gradient[i] for i in [6, 7, 9, 10]]
+    recent_bins = [bin_texts[i] for i in [2, 3, 4, 5]]
+    recent_bin_colors = [rgb_gradient[i] for i in [2, 3, 4, 5]]
 
 
 reset_button_y = height * 0.75
@@ -610,7 +612,7 @@ while running:
                         break
                     # Drop a ball between the top pins
                     start_x = random.randint(
-                        int(width // 2 - ratio * (21 - bias) * 5), int(width // 2 + ratio * (21 - bias) * 5))
+                        int(width // 2 - ratio * (21 - bias) * 3), int(width // 2 + ratio * (21 - bias) * 5))
                     # [x_position, y_position, x_speed, y_speed]
                     balls.append(
                         [start_x, random.randint(-2*ball_radius, -ball_radius), 0, 0])
@@ -643,7 +645,7 @@ while running:
                         break
                     # Drop a ball between the top pins
                     start_x = random.randint(
-                        int(width // 2 - ratio * (21 - bias) * 5), int(width // 2 + ratio * (21 - bias) * 5))
+                        int(width // 2 - ratio * (21 - bias) * 3), int(width // 2 + ratio * (21 - bias) * 5))
                     # [x_position, y_position, x_speed, y_speed]
                     balls.append(
                         [start_x, random.randint(-2*ball_radius, -ball_radius), 0, 0])
@@ -716,7 +718,7 @@ while running:
         # Remove the ball at the bottom
         if ball[1] > (pin_rows+0.5) * pin_spacing + pin_start:
             ball[1] = height - ball_radius
-            bin = int(((ball[0] - (width // 2) + pin_spacing // 2) + (pin_spacing * 8)) // pin_spacing)
+            bin = int(((ball[0] - (width // 2)) + (pin_spacing * (4))) // pin_spacing)
             del_balls_x.append(bin)
             hit_bins.append(bin)
             balls.remove(ball)
